@@ -1,52 +1,66 @@
-# miniDB
+# Final course assignment
 
-The miniDB project is a minimal and easy to expand and develop for RMDBS tool, written excusivelly in Python 3. MiniDB's main goal is to provide the user with as much functionality as posssible while being easy to understand and even easier to expand. Thus, miniDB's primary market are students and researchers that want to work with a tool that they can understand through and through, while being able to implement additional features as quickly as possible.
 
-## Installation
 
-Python 3.7 or newer is needed. To download and build the project run:
+ ```
+Students:
 
-```bash
-git clone https://github.com/DataStories-UniPi/miniDB.git
-cd miniDB
-pip install -r requirements.txt
+Antonis Kalampogias P18050
+Thodoris Charalampopoulos P18169
+ ```
+
+
+
+We have developed 2 major parts for the project miniDB
+
+- [x] Server - Client (Difficulty 3)
+
+- [x] SQL Compiler (Difficulty 2)
+
+## Server - Client
+
+This program consists of 2 files 
+
+```
+Server.py
+Client.py
 ```
 
-The last command will install the packages found in [`requirements.txt`](https://github.com/DataStories-UniPi/miniDB/blob/master/requirements.txt). MiniDB is based on the following dependencies:
-* `tabulate` (for text formatting)
-* `graphviz` (for graph visualizations; optional)
-* `matplotlib` (for plotting; optional)
 
-Alternatively, the above dependencies can be installed with the following command:
-```python
-pip install tabulate graphviz matplotlib
+
+### Server.py
+
+will be the main file for executing and delivering the query to the client
+
+Here the code creates a socket connection on the users pc and upon connection from another socket, it calls the miniDB desired source code to execute the message as a query and then transmit the results of the query to the inbound connection.
+
+
+
+### Client.py
+
+This is the second part of the project that upon startup will try to connect to the port *Server.py* is on, if this statement is true *Server* will begin the execution of the received query and will send to the Receiver the results.
+
+
+
+## SQL Compiler
+
+This program consists of 1 file 
+
+```
+SQLcompiler.py
 ```
 
-Linux users can optionally install the `Graphviz` package to visualize graphs:
-```bash
-sudo apt-get install graphviz
-```
-Installation instructions for non-Linux users can be found [here](https://graphviz.org/download/).
+Examples on how to use
 
-## Documentation
-
-The file [documentation.pdf](documentation.pdf) contains a detailed description of the miniDB library (in Greek).
-
-## Loading the [smallRelations database](https://www.db-book.com/db6/lab-dir/sample_tables-dir/index.html)
-
-To create a database containing the smallRelations tables and get an interactive shell, run
-``` Python
-python -i smallRelationsInsertFile.py
-```
-You can the access the database through the db object that will be available. For example, you can show the contents of the student table by running the following command:
-```python
->> db.show_table('student')
-```
-The database wil be save with the name `smdb`. You can load the database in a separate Python shell by running the following commands:
-```python
->> from database import Database
->> db = Database("smdb", load=True)
+```sql
+1. create database Example
+2. create table exampleTable ( Name varchar, Age int, Address varchar)
+3. select * from exampleTable
+4. drop database Example
 ```
 
-## Contributors
-George S. Theodoropoulos, Yannis Kontoulis, Yannis Theodoridis; Data Science Lab., University of Piraeus.
+This function will basically implement the basic functions one can encounter in any SQL compiler available on the market.
+
+**IMPORTANT NOTE** 
+
+Please bare in mind that for the compiler to successfully execute all of your queries, you will have to pay attention to your spacings, for example notice from the above examples `2.`. Notice the spaces applied between the name of the table as well as the spaces inside the parenthesis and the commas, this is because the compiler looks for words individually between the spaces and commas to understand what it is to be done.
