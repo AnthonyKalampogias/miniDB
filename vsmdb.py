@@ -10,3 +10,4 @@ db.insert('classroom', ['Taylor', '3128', '70'])
 db.insert('classroom', ['Watson', '100', '30'])
 db.insert('classroom', ['Watson', '120', '50'])
 
+db.select('classroom','*')

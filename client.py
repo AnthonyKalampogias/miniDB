@@ -11,6 +11,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.sendall(query.encode())
         data = s.recv(1024)
         print('Received response from server\n', data.decode('utf8', 'strict'))
+        s.close()
     else:
         print("Something wrong with your input!\n Please check the provided examples and try again :)")
 
