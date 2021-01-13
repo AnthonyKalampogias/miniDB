@@ -1,9 +1,9 @@
 import re
 from database import Database
 
-def sqlCompiler(usrInput,db):   
+def sqlCompiler(usrInput,db=None):   
     sanitizedUsrInput = usrInput.upper()
-    
+    # dataBase = db
     #Removes unnecessary  '', "", and ()
     sanitizedUsrInput = re.sub(re.compile('[^A-Za-z\s,*1234567890<>=]'), "", sanitizedUsrInput)
     # Splits the input in a list of 4 (so you can select the first 3 to determine what to do) i.e. create database/table etc
@@ -14,7 +14,8 @@ def sqlCompiler(usrInput,db):
             try:
                 if args[2] != "":
                     db = Database(args[2], load=False)
-                    return(db,"Created database {}".format(args[2]))
+                    return(db, "Successfully created the db")
+                    #,"Created database {}".format(args[2])
                 else:
                     return("Please provide a name for your database")
             except:
@@ -53,7 +54,8 @@ def sqlCompiler(usrInput,db):
                         pass
                 #Sets as PK the FIRST column 
                 db.create_table(tableName, fieldNames, dataTypes, fieldNames[0])
-                print("Successfully created the table")
+                return(db, "Successfully created the table")
+                # return(db,"Successfully created the table")
             else:
                 pass
         elif args[1] == "INDEX":
@@ -67,6 +69,7 @@ def sqlCompiler(usrInput,db):
                     args3 = args2.split(" ")
                     tbName = args3[0]
                     db.create_index(tbName, indexName)
+                    return(db,"Successfully created the index")
                 except:
                     pass
         else:
@@ -105,10 +108,8 @@ def sqlCompiler(usrInput,db):
             args.pop(0)
             args.pop(0)
             tbName = args.pop(0)
-            try:
-                db.select(tbName, '*')
-            except:
-                return("No table with that name found")
+            db.select(tbName, '*')
+            return(db)
         else:
             try:
                 args.pop(0)
@@ -121,6 +122,7 @@ def sqlCompiler(usrInput,db):
                 condition = args2[-1]
                 # Does not work...
                 db.inner_join(leftTableName, rightTableName, condition)
+                return(db, "Successfully created the index")
             except:
                 pass
     elif args[0] == "UPDATE":
@@ -152,6 +154,7 @@ def sqlCompiler(usrInput,db):
                 # For example, if you want to change the personid from 10 to 15 the condition would be 'where personid > 2'
                 # Still dont know how that works... 
                 db.update(tbName, setValues[0], setColumns[0], condition)
+                return(db, "Successfully updated the row(s)")
             except:
                 pass
     elif args[0] == "INSERT":
@@ -171,6 +174,7 @@ def sqlCompiler(usrInput,db):
                     values = []
                     values = newstr.split(',')
                     db.insert(tbName, values)
+                    return(db, "Successfully inserted the data")
             except:
                 pass
             else:
@@ -186,6 +190,7 @@ def sqlCompiler(usrInput,db):
                 conditions = conditions.replace("WHERE ", "")
                 #You sanitize the conditions sting (the function takes input as 'id>10') thats why you take the "conditions" part as a hole string
                 db.delete(tbName, conditions)
+                return(db, "Successfully deleted the row(s)")
                 #TODO if i use the equal ("=") in the condition part, it breaks... (no idea why)
             except:
                 pass
@@ -200,10 +205,26 @@ def sqlCompiler(usrInput,db):
             if dbName != "":
                 # return(db,type(dbName))
                 # return(db,dbName)
-                return(db,"Loaded database {dbName}")
+                db = Database(dbName, load=True)
+                return(db, "Loaded the database")
         else:
             return(db,"Wrong format")
 
     else:
         return(db,usrInput, " Is a wrong format")
+
+# createdDB, msg = sqlCompiler("use database sampleData")
+
+# print(msg)
+
+# resulty, msg = sqlCompiler("CREATE TABLE Persons5 ( PersonID int, LastName varchar, FirstName varchar, Hight int)", createdDB)
+
+# print(msg)
+
+# createdDB, samplestr = sqlCompiler("create database sampleData")
+
+# print(samplestr)
+
+# sqlCompiler("CREATE TABLE Persons ( PersonID int, LastName varchar, FirstName varchar, Hight int)", createdDB)
+
 

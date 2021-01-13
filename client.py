@@ -1,5 +1,6 @@
 import socket
 import ast
+import pickle
 
 query = input(
     "What is the query you would like to execute ?\n Examples: select('classroom','*')\nInput: ")
@@ -16,26 +17,30 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             data = s.recv(1024)
             print('Received response from server\n',
                   data.decode('utf8', 'strict'))
-
             nextQuery = input(
                 "Would you like to execute something else ?[y/n]\nIf you later wish to exit the program don't enter anything in your input and press Enter...\nInput:")
-
-        elif nextQuery == "y" or nextQuery == "Y":
-            query = input(
-                "What is the query you would like to execute ?\n Examples: select('classroom','*')\nInput:")
-            if query != "":
-                s.sendall(query.encode())
-                data = s.recv(1024)
-                print('Received response from server\n',
-                      data.decode('utf8', 'strict'))
-            else:
-                print(
-                    "Something wrong with your input!\n Please check the provided examples and try again :)")
-                s.close()
-                exit()
-
+            query = nextQuery
         else:
             print(
-                "Something wrong with your input!\n Please check the provided examples and try again :)")
+                "Something1 wrong with your input!\n Please check the provided examples and try again :)")
             s.close()
             exit()
+
+        if query != "":
+            s.sendall(query.encode())
+            data = s.recv(1024)
+            print('Received response from server\n',
+                    data.decode('utf8', 'strict'))
+            query = input(
+                "Would you like to execute something else ?[y/n]\nIf you later wish to exit the program don't enter anything in your input and press Enter...\nInput:")
+            continue
+        else:
+            print(
+                "Something2 wrong with your input!\n Please check the provided examples and try again :)")
+            s.close()
+            exit()
+        
+
+# elif nextQuery == "y" or nextQuery == "Y":
+#             query = input(
+#                 "What is the query you would like to execute ?\n Examples: select('classroom','*')\nInput:")
