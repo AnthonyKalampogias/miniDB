@@ -2,6 +2,7 @@ from database import Database
 import socket
 import sys
 from io import StringIO
+import SQLcompiler
 
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
@@ -21,45 +22,28 @@ def clientConnect(receivedData, data):
     if receivedData:  # If this is the first query, wait for input
         data = conn.recv(1024)  # Receive query
         data = data.decode("utf-8")  # Decode it
-        data = data.lower()  # Sanitize user input to check what he wants to execute
+        data = data.lower()
+        data = data.split(" ")
+        if "use" in data:
+            db = Database(data[2], load=True)
+    if data != "":
+        result = SQLcompiler.sqlCompiler(data,db)
+    else :
+        conn.sendall("Something went wrong with your input..")
+        conn.close()
 
-    if "database" in data:  # Check if the user wants to create a database
-        data = data.split("'")
-        db = Database(data[1], load=False)
+    print(result)
+    conn.sendall(str.encode(result))
+    data = conn.recv(1024)  # Receive query
+    data = data.decode("utf-8")  # Decode it
+    if data != "":
+        # Recursivly call it's self with setting the receivedData flag to false so it won't wait again for input
+        clientConnect(False, data)
+            # receivedData -> False, there is already available data to execute
+            # data -> Now has the received data from the client
     else:
-        # create db with name "clientCB"
-        db = Database('clientCB', load=False)
-        FinalQuery = "db.{}".format(data)
-        # Add to a variable with the db object along with the received query from the client
-        print("Client {} requested to execute the query {}".format(addr, FinalQuery))
-
-        old_stdout = sys.stdout
-        result = StringIO()
-        sys.stdout = result
-        # Above 3 lines are standard to save the stdout that python uses with print()
-        # inside the variable result
-
-        if len(FinalQuery) > 3:  # Contains more than just "db." the object
-            exec(FinalQuery)  # Execute the query
-            sendToClient = True
-        if not sendToClient:
-            print("Something went wrong..\n")
-
-        else:
-            sys.stdout = old_stdout
-            result_string = result.getvalue()
-            print(result_string)
-            conn.sendall(str.encode(result_string))
-            data = conn.recv(1024)  # Receive query
-            data = data.decode("utf-8")  # Decode it
-            if data != "":
-                # Recursivly call it's self with setting the receivedData flag to false so it won't wait again for input
-                clientConnect(False, data)
-                    # receivedData -> False, there is already available data to execute
-                    # data -> Now has the received data from the client
-            else:
-                print("Empty Input!!!\nTerminating connection...")
-                conn.close()
+        print("Empty Input!!!\nTerminating connection...")
+        conn.close()
 
 
 while True:

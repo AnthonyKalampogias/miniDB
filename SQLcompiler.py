@@ -1,9 +1,9 @@
 import re
 from database import Database
 
-while True:
-    usrInput = input("Enter your SQL command: \n")    
+def sqlCompiler(usrInput,db):   
     sanitizedUsrInput = usrInput.upper()
+    
     #Removes unnecessary  '', "", and ()
     sanitizedUsrInput = re.sub(re.compile('[^A-Za-z\s,*1234567890<>=]'), "", sanitizedUsrInput)
     # Splits the input in a list of 4 (so you can select the first 3 to determine what to do) i.e. create database/table etc
@@ -14,14 +14,15 @@ while True:
             try:
                 if args[2] != "":
                     db = Database(args[2], load=False)
-                    print("Created my DB")
+                    return(db,"Created database {}".format(args[2]))
                 else:
-                    print("Please provide a name for your database")
+                    return("Please provide a name for your database")
             except:
                 pass
         elif args[1] == "TABLE":
             if args[2] != "":
                 #removes the (now unnecessary) first 2 elements 
+<<<<<<< HEAD
                 args.pop(0)
                 args.pop(0)
                 #takes the name of the table
@@ -54,6 +55,43 @@ while True:
                 #Sets as PK the FIRST column 
                 db.create_table(tableName, fieldNames, dataTypes, fieldNames[0])
                 print("Successfully created the table")
+=======
+                #try:
+                    args.pop(0)
+                    args.pop(0)
+                    #takes the name of the table
+                    tableName = args.pop(0)
+                    args2 = ''.join(args)
+                    args2 = args2.split(',')
+                    #args2 now contains elements in the form 'fieldname datatype'
+                    newstr = ""
+                    fieldNames = []
+                    dataTypes = []
+                    #loops through args2 and splits the fieldnames and the datatypes in 2 different lists
+                    for x in args2:
+                        newstr += x
+                        args3 = newstr.split(' ')
+                        fieldNames.append(args3[1])
+                        dataTypes.append(args3[2])
+                        newstr = ""
+                    #loops through datatypes and converts the varchar and int to their appropriate 'str' and 'int' counterparts
+                    for item in dataTypes:
+                        if item == 'VARCHAR':
+                            index = dataTypes.index(item)
+                            dataTypes.remove(item)
+                            dataTypes.insert(index, str)
+                        elif item == 'INT':
+                            index = dataTypes.index(item)
+                            dataTypes.remove(item)
+                            dataTypes.insert(index, int)
+                        else:
+                            pass
+                    #Sets as PK the FIRST column 
+                    db.create_table(tableName, fieldNames, dataTypes)
+                    return(db,"Successfully created the table {}".format(tableName))
+               #except:
+                   # pass
+>>>>>>> 17c4ffde63acb9af7a884f335013c6db96bb3e08
             else:
                 pass
         elif args[1] == "INDEX":
@@ -70,7 +108,7 @@ while True:
                 except:
                     pass
         else:
-            print(usrInput, " Is a wrong format")
+            return(usrInput, " Is a wrong format")
     elif args[0] == "DROP":
         if args[1] == "DATABASE":
             if args[2] != "":
@@ -80,11 +118,11 @@ while True:
                     args.pop(0)
                     dbName = args.pop(0)
                     db.drop_db()
-                    print("Successfully dropped the database")
+                    return(db,"Successfully dropped the database")
                 except:
                     pass
             else:
-                print("Wrong format")
+                return("Wrong format")
         elif args[1] == "TABLE":
             if args[2] != "":
                 #You save the name, you drop the table
@@ -93,7 +131,7 @@ while True:
                     args.pop(0)
                     tbName = args.pop(0)
                     db.drop_table(tbName)
-                    print("Successfully dropped the table")
+                    return(db,"Successfully dropped the table")
                 except:
                     pass
         else:
@@ -108,7 +146,7 @@ while True:
             try:
                 db.select(tbName, '*')
             except:
-                print("No table with that name found")
+                return("No table with that name found")
         else:
             try:
                 args.pop(0)
@@ -174,7 +212,7 @@ while True:
             except:
                 pass
             else:
-                print("Please provide a name for your table")
+                return(db,"Please provide a name for your table")
     elif args[0] == "DELETE":
         if args[2] != "":
             try:
@@ -198,13 +236,12 @@ while True:
             args.pop(0)
             dbName = args.pop(0)
             if dbName != "":
-                print(type(dbName))
-                print(dbName)
-                db = Database(dbName, load=True)
+                # return(db,type(dbName))
+                # return(db,dbName)
+                return(db,"Loaded database {dbName}")
         else:
-            print("Wrong format")
-            break
+            return(db,"Wrong format")
+
     else:
-        print(usrInput, " Is a wrong format")
-        break
+        return(db,usrInput, " Is a wrong format")
 
