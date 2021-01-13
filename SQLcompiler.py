@@ -22,7 +22,6 @@ def sqlCompiler(usrInput,db):
         elif args[1] == "TABLE":
             if args[2] != "":
                 #removes the (now unnecessary) first 2 elements 
-<<<<<<< HEAD
                 args.pop(0)
                 args.pop(0)
                 #takes the name of the table
@@ -55,43 +54,6 @@ def sqlCompiler(usrInput,db):
                 #Sets as PK the FIRST column 
                 db.create_table(tableName, fieldNames, dataTypes, fieldNames[0])
                 print("Successfully created the table")
-=======
-                #try:
-                    args.pop(0)
-                    args.pop(0)
-                    #takes the name of the table
-                    tableName = args.pop(0)
-                    args2 = ''.join(args)
-                    args2 = args2.split(',')
-                    #args2 now contains elements in the form 'fieldname datatype'
-                    newstr = ""
-                    fieldNames = []
-                    dataTypes = []
-                    #loops through args2 and splits the fieldnames and the datatypes in 2 different lists
-                    for x in args2:
-                        newstr += x
-                        args3 = newstr.split(' ')
-                        fieldNames.append(args3[1])
-                        dataTypes.append(args3[2])
-                        newstr = ""
-                    #loops through datatypes and converts the varchar and int to their appropriate 'str' and 'int' counterparts
-                    for item in dataTypes:
-                        if item == 'VARCHAR':
-                            index = dataTypes.index(item)
-                            dataTypes.remove(item)
-                            dataTypes.insert(index, str)
-                        elif item == 'INT':
-                            index = dataTypes.index(item)
-                            dataTypes.remove(item)
-                            dataTypes.insert(index, int)
-                        else:
-                            pass
-                    #Sets as PK the FIRST column 
-                    db.create_table(tableName, fieldNames, dataTypes)
-                    return(db,"Successfully created the table {}".format(tableName))
-               #except:
-                   # pass
->>>>>>> 17c4ffde63acb9af7a884f335013c6db96bb3e08
             else:
                 pass
         elif args[1] == "INDEX":
