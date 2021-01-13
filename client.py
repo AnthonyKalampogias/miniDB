@@ -2,7 +2,7 @@ import socket
 import ast
 
 query = input(
-    "What is the query you would like to execute ?\n Examples: select('classroom','*')\nInput:")
+    "What is the query you would like to execute ?\n Examples: select('classroom','*')\nInput: ")
 nextQuery = None  # At first it will be empty to trigger the question on the client if he wishes to execute more than one query but if it sets a value it won't be asked again
 
 HOST = '127.0.0.1'  # The server's hostname or IP address

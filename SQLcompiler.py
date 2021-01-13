@@ -1,9 +1,9 @@
 import re
 from database import Database
 
-while True:
-    usrInput = input("Enter your SQL command: \n")    
+def sqlCompiler(usrInput,db):   
     sanitizedUsrInput = usrInput.upper()
+    
     #Removes unnecessary  '', "", and ()
     sanitizedUsrInput = re.sub(re.compile('[^A-Za-z\s,*1234567890<>=]'), "", sanitizedUsrInput)
     # Splits the input in a list of 4 (so you can select the first 3 to determine what to do) i.e. create database/table etc
@@ -14,15 +14,15 @@ while True:
             try:
                 if args[2] != "":
                     db = Database(args[2], load=False)
-                    print("Created my DB")
+                    return(db,"Created database {}".format(args[2]))
                 else:
-                    print("Please provide a name for your database")
+                    return("Please provide a name for your database")
             except:
                 pass
         elif args[1] == "TABLE":
             if args[2] != "":
                 #removes the (now unnecessary) first 2 elements 
-                try:
+                #try:
                     args.pop(0)
                     args.pop(0)
                     #takes the name of the table
@@ -53,10 +53,10 @@ while True:
                         else:
                             pass
                     #Sets as PK the FIRST column 
-                    db.create_table(tableName, fieldNames, dataTypes, fieldNames[0])
-                    print("Successfully created the table")
-                except:
-                    pass
+                    db.create_table(tableName, fieldNames, dataTypes)
+                    return(db,"Successfully created the table {}".format(tableName))
+               #except:
+                   # pass
             else:
                 pass
         elif args[1] == "INDEX":
@@ -73,7 +73,7 @@ while True:
                 except:
                     pass
         else:
-            print(usrInput, " Is a wrong format")
+            return(usrInput, " Is a wrong format")
     elif args[0] == "DROP":
         if args[1] == "DATABASE":
             if args[2] != "":
@@ -83,11 +83,11 @@ while True:
                     args.pop(0)
                     dbName = args.pop(0)
                     db.drop_db()
-                    print("Successfully dropped the database")
+                    return(db,"Successfully dropped the database")
                 except:
                     pass
             else:
-                print("Wrong format")
+                return("Wrong format")
         elif args[1] == "TABLE":
             if args[2] != "":
                 #You save the name, you drop the table
@@ -96,7 +96,7 @@ while True:
                     args.pop(0)
                     tbName = args.pop(0)
                     db.drop_table(tbName)
-                    print("Successfully dropped the table")
+                    return(db,"Successfully dropped the table")
                 except:
                     pass
         else:
@@ -111,7 +111,7 @@ while True:
             try:
                 db.select(tbName, '*')
             except:
-                print("No table with that name found")
+                return("No table with that name found")
         else:
             try:
                 args.pop(0)
@@ -177,7 +177,7 @@ while True:
             except:
                 pass
             else:
-                print("Please provide a name for your table")
+                return(db,"Please provide a name for your table")
     elif args[0] == "DELETE":
         if args[2] != "":
             try:
@@ -201,13 +201,12 @@ while True:
             args.pop(0)
             dbName = args.pop(0)
             if dbName != "":
-                print(type(dbName))
-                print(dbName)
-                db = Database(dbName, load=True)
+                # return(db,type(dbName))
+                # return(db,dbName)
+                return(db,"Loaded database {dbName}")
         else:
-            print("Wrong format")
-            break
+            return(db,"Wrong format")
+
     else:
-        print(usrInput, " Is a wrong format")
-        break
+        return(db,usrInput, " Is a wrong format")
 
