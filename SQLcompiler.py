@@ -109,7 +109,8 @@ def sqlCompiler(usrInput,db=None):
             args.pop(0)
             tbName = args.pop(0)
             db.select(tbName, '*')
-            return(db)
+            return(db, "Sample")
+            
         else:
             try:
                 args.pop(0)
@@ -213,15 +214,17 @@ def sqlCompiler(usrInput,db=None):
     else:
         return(db,usrInput, " Is a wrong format")
 
-# createdDB, msg = sqlCompiler("use database sampleData")
+
+
+# createdDB, msg = sqlCompiler("create database sampleData123456")
 
 # print(msg)
 
-# resulty, msg = sqlCompiler("CREATE TABLE Persons5 ( PersonID int, LastName varchar, FirstName varchar, Hight int)", createdDB)
+# createdDB, msg = sqlCompiler("CREATE TABLE Persons7 ( PersonID int, LastName varchar, FirstName varchar, Hight int)", createdDB)
 
 # print(msg)
 
-# createdDB, samplestr = sqlCompiler("create database sampleData")
+# createdDB, samplestr = sqlCompiler("select * from persons", createdDB)
 
 # print(samplestr)
 
