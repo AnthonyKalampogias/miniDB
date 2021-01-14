@@ -11,14 +11,10 @@ PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
 
 # Function to run when a clinet connects to the server
 
-
-
 def clientConnect(receivedData, data, oldDatabase):
     #receivedData is a flag that tells the function to either wait for input(first run from client) line 21
     # or either tell it that I have a new input from the client so just execute that
     # data is the variable that I store the desired query and it contains a value only when the function is recursively called
-
-    flag41stTimeuse = False
 
     sendToClient = False  # if true the server will send the response to the client
 
@@ -33,7 +29,6 @@ def clientConnect(receivedData, data, oldDatabase):
             try:
                 if "use" in data2:
                     db, msg = SQLcompiler.sqlCompiler(data)
-                    print("got here")
                 else:
                     db = None
                     db, msg = SQLcompiler.sqlCompiler(data,db)
