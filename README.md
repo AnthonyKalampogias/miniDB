@@ -53,10 +53,25 @@ SQLcompiler.py
 Examples on how to use
 
 ```sql
-1. create database Example
-2. create table exampleTable ( Name varchar, Age int, Address varchar)
-3. select * from exampleTable
-4. drop database Example
+1. CREATE DATABASE SampleDbName
+
+2. CREATE TABLE Persons ( PersonID int, LastName varchar, FirstName varchar, Hight int )
+
+3. CREATE TABLE Orders ( PersonID int, OrderID int, Amount int )
+
+4. INSERT INTO Persons VALUES (15, 'Halo', 'Hi', 176)
+
+5. INSERT INTO Orders VALUES (15, 15, 403)
+
+6. use database sampledata
+
+7. select * from persons
+
+8. DELETE FROM persons WHERE personid>10
+
+9. UPDATE PERSONS set PERSONID = 10, HIGHT = 180 where PERSONID > 2
+
+10. CREATE INDEX idx_lastname ON Persons (PERSONID)
 ```
 
 This function will basically implement the basic functions one can encounter in any SQL compiler available on the market.
