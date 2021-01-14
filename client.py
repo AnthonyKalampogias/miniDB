@@ -1,6 +1,6 @@
 import socket
 import ast
-import pickle
+
 
 query = input(
     "What is the query you would like to execute ?\n Examples: select('classroom','*')\nInput: ")

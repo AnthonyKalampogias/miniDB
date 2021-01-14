@@ -1,5 +1,8 @@
 import re
 from database import Database
+import sys
+from io import StringIO
+
 
 def sqlCompiler(usrInput,db=None):   
     sanitizedUsrInput = usrInput.upper()
@@ -108,8 +111,22 @@ def sqlCompiler(usrInput,db=None):
             args.pop(0)
             args.pop(0)
             tbName = args.pop(0)
+
+            old_stdout = sys.stdout
+
+            result = StringIO()
+
+            sys.stdout = result
+
             db.select(tbName, '*')
-            return(db, "Sample")
+
+            sys.stdout = old_stdout
+
+            result_string = result.getvalue()
+
+            #print(result_string)
+
+            return(db, result_string)
             
         else:
             try:
