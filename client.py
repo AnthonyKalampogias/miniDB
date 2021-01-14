@@ -18,21 +18,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print('Received response from server\n', data.decode('utf8', 'strict'))
             nextQuery = input("Enter your query\n")
             query = nextQuery
-            print(query)
-            print("-------------------------")
-            print(nextQuery)
         else:
             pass
-            # print(
-            #     "Something1 wrong with your input!\n Please check the provided examples and try again :)")
-            # s.close()
-            # exit()
         if query != "":
             s.sendall(query.encode())
             data = s.recv(1024)
             print('Received response from server\n', data.decode('utf8', 'strict'))
             query = input("Enter your query\n")
-            print(query)
             continue
         else:
             print(
@@ -40,8 +32,3 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.close()
             exit()
         
-
-# elif nextQuery == "y" or nextQuery == "Y":
-#             query = input(
-#                 "What is the query you would like to execute ?\n Examples: select('classroom','*')\nInput:")
-#Would you like to execute something else ?[y/n]\nIf you later wish to exit the program don't enter anything in your input and press Enter...\nInput:

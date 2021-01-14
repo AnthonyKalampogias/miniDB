@@ -111,21 +111,13 @@ def sqlCompiler(usrInput,db=None):
             args.pop(0)
             args.pop(0)
             tbName = args.pop(0)
-
             old_stdout = sys.stdout
-
             result = StringIO()
-
             sys.stdout = result
-
             db.select(tbName, '*')
-
             sys.stdout = old_stdout
-
             result_string = result.getvalue()
-
             #print(result_string)
-
             return(db, result_string)
             
         else:
@@ -230,21 +222,4 @@ def sqlCompiler(usrInput,db=None):
 
     else:
         return(db,usrInput, " Is a wrong format")
-
-
-
-# createdDB, msg = sqlCompiler("create database sampleData123456")
-
-# print(msg)
-
-# createdDB, msg = sqlCompiler("CREATE TABLE Persons7 ( PersonID int, LastName varchar, FirstName varchar, Hight int)", createdDB)
-
-# print(msg)
-
-# createdDB, samplestr = sqlCompiler("select * from persons", createdDB)
-
-# print(samplestr)
-
-# sqlCompiler("CREATE TABLE Persons ( PersonID int, LastName varchar, FirstName varchar, Hight int)", createdDB)
-
 
