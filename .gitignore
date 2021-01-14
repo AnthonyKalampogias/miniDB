@@ -1,3 +1,6 @@
 dbdata/
 __pycache__/
 vsmdb.py
+.vscode/
+test.py
+
