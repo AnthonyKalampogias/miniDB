@@ -1,9 +1,12 @@
 import re
 from database import Database
+import sys
+from io import StringIO
 
-while True:
-    usrInput = input("Enter your SQL command: \n")    
+
+def sqlCompiler(usrInput,db=None):   
     sanitizedUsrInput = usrInput.upper()
+    # dataBase = db
     #Removes unnecessary  '', "", and ()
     sanitizedUsrInput = re.sub(re.compile('[^A-Za-z\s,*1234567890<>=]'), "", sanitizedUsrInput)
     # Splits the input in a list of 4 (so you can select the first 3 to determine what to do) i.e. create database/table etc
@@ -14,49 +17,48 @@ while True:
             try:
                 if args[2] != "":
                     db = Database(args[2], load=False)
-                    print("Created my DB")
+                    return(db, "Successfully created the db")
+                    #,"Created database {}".format(args[2])
                 else:
-                    print("Please provide a name for your database")
+                    return("Please provide a name for your database")
             except:
                 pass
         elif args[1] == "TABLE":
             if args[2] != "":
                 #removes the (now unnecessary) first 2 elements 
-                try:
-                    args.pop(0)
-                    args.pop(0)
-                    #takes the name of the table
-                    tableName = args.pop(0)
-                    args2 = ''.join(args)
-                    args2 = args2.split(',')
-                    #args2 now contains elements in the form 'fieldname datatype'
+                args.pop(0)
+                args.pop(0)
+                #takes the name of the table
+                tableName = args.pop(0)
+                args2 = ''.join(args)
+                args2 = args2.split(',')
+                #args2 now contains elements in the form 'fieldname datatype'
+                newstr = ""
+                fieldNames = []
+                dataTypes = []
+                #loops through args2 and splits the fieldnames and the datatypes in 2 different lists
+                for x in args2:
+                    newstr += x
+                    args3 = newstr.split(' ')
+                    fieldNames.append(args3[1])
+                    dataTypes.append(args3[2])
                     newstr = ""
-                    fieldNames = []
-                    dataTypes = []
-                    #loops through args2 and splits the fieldnames and the datatypes in 2 different lists
-                    for x in args2:
-                        newstr += x
-                        args3 = newstr.split(' ')
-                        fieldNames.append(args3[1])
-                        dataTypes.append(args3[2])
-                        newstr = ""
-                    #loops through datatypes and converts the varchar and int to their appropriate 'str' and 'int' counterparts
-                    for item in dataTypes:
-                        if item == 'VARCHAR':
-                            index = dataTypes.index(item)
-                            dataTypes.remove(item)
-                            dataTypes.insert(index, str)
-                        elif item == 'INT':
-                            index = dataTypes.index(item)
-                            dataTypes.remove(item)
-                            dataTypes.insert(index, int)
-                        else:
-                            pass
-                    #Sets as PK the FIRST column 
-                    db.create_table(tableName, fieldNames, dataTypes, fieldNames[0])
-                    print("Successfully created the table")
-                except:
-                    pass
+                #loops through datatypes and converts the varchar and int to their appropriate 'str' and 'int' counterparts
+                for item in dataTypes:
+                    if item == 'VARCHAR':
+                        index = dataTypes.index(item)
+                        dataTypes.remove(item)
+                        dataTypes.insert(index, str)
+                    elif item == 'INT':
+                        index = dataTypes.index(item)
+                        dataTypes.remove(item)
+                        dataTypes.insert(index, int)
+                    else:
+                        pass
+                #Sets as PK the FIRST column 
+                db.create_table(tableName, fieldNames, dataTypes, fieldNames[0])
+                return(db, "Successfully created the table")
+                # return(db,"Successfully created the table")
             else:
                 pass
         elif args[1] == "INDEX":
@@ -70,10 +72,11 @@ while True:
                     args3 = args2.split(" ")
                     tbName = args3[0]
                     db.create_index(tbName, indexName)
+                    return(db,"Successfully created the index")
                 except:
                     pass
         else:
-            print(usrInput, " Is a wrong format")
+            return(usrInput, " Is a wrong format")
     elif args[0] == "DROP":
         if args[1] == "DATABASE":
             if args[2] != "":
@@ -83,11 +86,11 @@ while True:
                     args.pop(0)
                     dbName = args.pop(0)
                     db.drop_db()
-                    print("Successfully dropped the database")
+                    return(db,"Successfully dropped the database")
                 except:
                     pass
             else:
-                print("Wrong format")
+                return("Wrong format")
         elif args[1] == "TABLE":
             if args[2] != "":
                 #You save the name, you drop the table
@@ -96,7 +99,7 @@ while True:
                     args.pop(0)
                     tbName = args.pop(0)
                     db.drop_table(tbName)
-                    print("Successfully dropped the table")
+                    return(db,"Successfully dropped the table")
                 except:
                     pass
         else:
@@ -108,10 +111,23 @@ while True:
             args.pop(0)
             args.pop(0)
             tbName = args.pop(0)
-            try:
-                db.select(tbName, '*')
-            except:
-                print("No table with that name found")
+
+            old_stdout = sys.stdout
+
+            result = StringIO()
+
+            sys.stdout = result
+
+            db.select(tbName, '*')
+
+            sys.stdout = old_stdout
+
+            result_string = result.getvalue()
+
+            #print(result_string)
+
+            return(db, result_string)
+            
         else:
             try:
                 args.pop(0)
@@ -124,6 +140,7 @@ while True:
                 condition = args2[-1]
                 # Does not work...
                 db.inner_join(leftTableName, rightTableName, condition)
+                return(db, "Successfully created the index")
             except:
                 pass
     elif args[0] == "UPDATE":
@@ -155,6 +172,7 @@ while True:
                 # For example, if you want to change the personid from 10 to 15 the condition would be 'where personid > 2'
                 # Still dont know how that works... 
                 db.update(tbName, setValues[0], setColumns[0], condition)
+                return(db, "Successfully updated the row(s)")
             except:
                 pass
     elif args[0] == "INSERT":
@@ -174,10 +192,11 @@ while True:
                     values = []
                     values = newstr.split(',')
                     db.insert(tbName, values)
+                    return(db, "Successfully inserted the data")
             except:
                 pass
             else:
-                print("Please provide a name for your table")
+                return(db,"Please provide a name for your table")
     elif args[0] == "DELETE":
         if args[2] != "":
             try:
@@ -189,6 +208,7 @@ while True:
                 conditions = conditions.replace("WHERE ", "")
                 #You sanitize the conditions sting (the function takes input as 'id>10') thats why you take the "conditions" part as a hole string
                 db.delete(tbName, conditions)
+                return(db, "Successfully deleted the row(s)")
                 #TODO if i use the equal ("=") in the condition part, it breaks... (no idea why)
             except:
                 pass
@@ -201,13 +221,30 @@ while True:
             args.pop(0)
             dbName = args.pop(0)
             if dbName != "":
-                print(type(dbName))
-                print(dbName)
+                # return(db,type(dbName))
+                # return(db,dbName)
                 db = Database(dbName, load=True)
+                return(db, "Loaded the database")
         else:
-            print("Wrong format")
-            break
+            return(db,"Wrong format")
+
     else:
-        print(usrInput, " Is a wrong format")
-        break
+        return(db,usrInput, " Is a wrong format")
+
+
+
+# createdDB, msg = sqlCompiler("create database sampleData123456")
+
+# print(msg)
+
+# createdDB, msg = sqlCompiler("CREATE TABLE Persons7 ( PersonID int, LastName varchar, FirstName varchar, Hight int)", createdDB)
+
+# print(msg)
+
+# createdDB, samplestr = sqlCompiler("select * from persons", createdDB)
+
+# print(samplestr)
+
+# sqlCompiler("CREATE TABLE Persons ( PersonID int, LastName varchar, FirstName varchar, Hight int)", createdDB)
+
 

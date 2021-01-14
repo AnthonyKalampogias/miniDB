@@ -3,4 +3,7 @@ __pycache__/
 vsmdb.py
 .vscode/
 test.py
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
